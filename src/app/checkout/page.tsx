@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/header";
 import GridPattern from "@/components/ui/grid-pattern";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, CreditCard, Mail, User, Phone, ArrowLeft, Loader2, Tag, ChevronDown, ChevronUp } from "lucide-react";
+import { CheckCircle2, CreditCard, Mail, User, Phone, ArrowLeft, Loader2, Tag } from "lucide-react";
 
 const courseData: Record<string, {
   title: string;
@@ -28,7 +28,7 @@ const courseData: Record<string, {
   }
 };
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const searchParams = useSearchParams();
   const courseSlug = searchParams.get("course") || "fullstack-vibe-coding";
   const course = courseData[courseSlug] || courseData["fullstack-vibe-coding"];
@@ -276,5 +276,32 @@ export default function CheckoutPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+function CheckoutLoading() {
+  return (
+    <div className="min-h-screen bg-linear-to-br from-indigo-50 to-violet-50 dark:from-gray-950 dark:to-gray-900">
+      <div className="absolute inset-0 opacity-30">
+        <GridPattern width={32} height={32} x={-0.5} y={-0.5} strokeDasharray={"0"} className="text-indigo-300/50 dark:text-indigo-700/30" />
+      </div>
+      <Header />
+      <main className="relative z-10 max-w-4xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+            <Loader2 className="w-6 h-6 animate-spin" />
+            <span>Memuat...</span>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<CheckoutLoading />}>
+      <CheckoutContent />
+    </Suspense>
   );
 }
